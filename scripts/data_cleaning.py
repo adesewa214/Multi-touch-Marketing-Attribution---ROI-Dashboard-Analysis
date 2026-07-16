@@ -7,22 +7,22 @@ from pathlib import Path
 import pandas as pd
 
 # ======================================================
-# PROJECT PATHS
+# FILE PATHS
 # ======================================================
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-RAW_DATA = BASE_DIR / "data" / "raw" / "multi_touch_attribution_data.csv"
+INPUT_FILE = BASE_DIR / "data" / "raw" / "final_multi_touch_attribution_roi_dataset_v2.csv"
 
-CLEANED_CSV = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_data.csv"
+CSV_OUTPUT = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_data.csv"
 
-CLEANED_EXCEL = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_data.xlsx"
+EXCEL_OUTPUT = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_data.xlsx"
 
 # ======================================================
-# LOAD DATASET
+# LOAD DATA
 # ======================================================
 
-df = pd.read_csv(RAW_DATA)
+df = pd.read_csv(INPUT_FILE)
 
 print("=" * 60)
 print("DATASET LOADED SUCCESSFULLY")
@@ -32,7 +32,7 @@ print("\nDataset Shape:")
 print(df.shape)
 
 print("\nDataset Information:")
-df.info()
+print(df.info())
 
 print("\nFirst Five Rows:")
 print(df.head())
@@ -42,15 +42,6 @@ print(df.isnull().sum())
 
 print("\nDuplicate Records:")
 print(df.duplicated().sum())
-
-print("\nUnique Channels:")
-print(df["Channel"].unique())
-
-print("\nUnique Campaigns:")
-print(df["Campaign"].unique())
-
-print("\nConversion Values:")
-print(df["Conversion"].unique())
 
 print("\nStatistical Summary:")
 print(df.describe(include="all"))
@@ -63,65 +54,120 @@ print("\n" + "=" * 60)
 print("STARTING DATA CLEANING")
 print("=" * 60)
 
-# ------------------------------------------------------
-# 1. Remove leading/trailing spaces
-# ------------------------------------------------------
+# -----------------------------
+# Remove duplicate rows
+# -----------------------------
+df = df.drop_duplicates()
 
-text_columns = ["Channel", "Campaign", "Conversion"]
+# -----------------------------
+# Trim spaces
+# -----------------------------
+text_columns = [
+    "Channel",
+    "Campaign",
+    "Conversion",
+    "Performance_Rating"
+]
 
 for col in text_columns:
-    df[col] = df[col].str.strip()
+    df[col] = df[col].astype(str).str.strip()
 
-# ------------------------------------------------------
-# 2. Convert Timestamp to Datetime
-# ------------------------------------------------------
+# -----------------------------
+# Replace '-' campaign
+# -----------------------------
+df["Campaign"] = df["Campaign"].replace("-", "No Campaign")
 
+# -----------------------------
+# Timestamp -> Datetime
+# -----------------------------
 df["Timestamp"] = pd.to_datetime(
     df["Timestamp"],
-    format="%d-%m-%Y %H:%M"
+    dayfirst=True,
+    errors="coerce"
 )
 
-# ------------------------------------------------------
-# 3. Standardize Data Types
-# ------------------------------------------------------
+# Remove invalid timestamps
+df = df.dropna(subset=["Timestamp"])
 
-# User ID -> Integer
+# -----------------------------
+# User ID Integer
+# -----------------------------
 df["User ID"] = df["User ID"].astype(int)
 
-# Channel -> Text
-df["Channel"] = df["Channel"].astype(str)
+# -----------------------------
+# Conversion Yes/No -> 1/0
+# -----------------------------
+df["Conversion"] = (
+    df["Conversion"]
+      .replace({
+          "Yes": 1,
+          "No": 0
+      })
+      .astype(int)
+)
 
-# Campaign -> Text
-df["Campaign"] = df["Campaign"].astype(str)
-
-# Conversion -> 1 / 0
-df["Conversion"] = df["Conversion"].map({
-    "Yes": 1,
-    "No": 0
-}).astype(int)
-
-# ------------------------------------------------------
-# 4. Sort records
-# ------------------------------------------------------
-
+# -----------------------------
+# Sort user journey
+# -----------------------------
 df = df.sort_values(
     by=["User ID", "Timestamp"]
-).reset_index(drop=True)
+)
 
-# ------------------------------------------------------
-# 5. Touchpoint Order
-# ------------------------------------------------------
-
+# -----------------------------
+# Touchpoint Order
+# -----------------------------
 df["Touchpoint_Order"] = (
     df.groupby("User ID")
-      .cumcount() + 1
+      .cumcount()
+      + 1
 )
 
 # ======================================================
-# FINAL DATASET SUMMARY
+# ROUND NUMERIC VALUES
 # ======================================================
 
-print("\nCleaning completed successfully!")
+money_columns = [
+    "Campaign_Cost_USD",
+    "Budget_USD",
+    "Revenue_USD",
+    "ROI_%",
+    "ROAS",
+    "CPA_USD"
+]
+
+for col in money_columns:
+    df[col] = df[col].round(2)
+
+# ======================================================
+# FIX PROFIT
+# ======================================================
+
+df["Profit_USD"] = (
+    df["Revenue_USD"]
+    - df["Campaign_Cost_USD"]
+).round(2)
+
+# ======================================================
+# VALIDATION
+# ======================================================
+
+validation = (
+    df["Profit_USD"]
+    ==
+    (df["Revenue_USD"] - df["Campaign_Cost_USD"]).round(2)
+)
+
+print("\nProfit Validation:")
+
+if validation.all():
+    print("PASS : Profit column is correct.")
+else:
+    print("FAIL : Profit column has inconsistencies.")
+    print("Rows Failed:", (~validation).sum())
+
+# ======================================================
+# FINAL DATA TYPES
+# ======================================================
 
 print("\nUpdated Data Types:")
 print(df.dtypes)
@@ -133,16 +179,24 @@ print("\nMissing Values After Cleaning:")
 print(df.isnull().sum())
 
 # ======================================================
-# EXPORT CLEANED DATASET
+# EXPORT
 # ======================================================
 
-df.to_csv(CLEANED_CSV, index=False)
+CSV_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
 
-df.to_excel(CLEANED_EXCEL, index=False)
+df.to_csv(
+    CSV_OUTPUT,
+    index=False
+)
+
+df.to_excel(
+    EXCEL_OUTPUT,
+    index=False
+)
 
 print("\n" + "=" * 60)
 print("CLEANED DATASET EXPORTED SUCCESSFULLY")
 print("=" * 60)
 
-print(f"\nCSV File   : {CLEANED_CSV}")
-print(f"Excel File : {CLEANED_EXCEL}")
+print(f"\nCSV File   : {CSV_OUTPUT}")
+print(f"Excel File : {EXCEL_OUTPUT}")
