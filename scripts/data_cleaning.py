@@ -177,6 +177,10 @@ print(df.shape)
 
 print("\nMissing Values After Cleaning:")
 print(df.isnull().sum())
+# -----------------------------
+# Fill missing CPA values with 0
+# -----------------------------
+df["CPA_USD"] = df["CPA_USD"].fillna(0).round(2)
 
 # ======================================================
 # EXPORT
