@@ -1,4 +1,4 @@
---overall conversion rate
+--overall conversion rateg
 SELECT
     COUNT(*) AS Total_Conversions
 FROM dbo.Multi_touch_market_attribution
