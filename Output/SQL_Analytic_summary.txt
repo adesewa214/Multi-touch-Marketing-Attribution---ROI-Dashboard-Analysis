@@ -1,0 +1,20 @@
+SQL Analytics summary. 
+
+Dataset: Multi touch Marketing Attribution ROI Dashboard Analysis
+
+Task 1 - KPI Analysis.
+
+1. Total Customers	
+2. Total Touchpoints	
+3. Total Conversions	
+4. Conversion Rate 
+5. Total Revenue 
+6. Total Profit 
+7. Average ROI 
+8. Average CPA 
+9. Total Campaign Cost 
+10.Total Budget 
+11.Budget Utilization
+12.Profit Margin	
+13.Average Revenue per Customer 
+14.Average Profit per Customer
