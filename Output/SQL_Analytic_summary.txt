@@ -18,3 +18,11 @@ Task 1 - KPI Analysis.
 12.Profit Margin	
 13.Average Revenue per Customer 
 14.Average Profit per Customer
+
+Task 2 - Customer Journey Analysis. 
+1. Customer Journey Length by User
+2. Average Customer Journey Length
+3. Touchpoint Order Distribution
+4. Top 10 Customers with the Longest Conversion Journey
+5. Average Time to Conversion
+6. Top 10 Customers with the Longest Conversion Time
