@@ -26,3 +26,13 @@ Task 2 - Customer Journey Analysis.
 4. Top 10 Customers with the Longest Conversion Journey
 5. Average Time to Conversion
 6. Top 10 Customers with the Longest Conversion Time
+
+Task 3 - Channel Performance Analysis. 
+1. Conversions by Marketing Channel
+2. Revenue by Marketing Channel
+3. Profit by Marketing Channel
+4. Average ROI by Marketing Channel
+5. Average CPA by Marketing Channel
+6. Conversion Rate by Marketing Channel
+7. Touchpoints by Marketing Channel
+8. Performance Rating by Marketing Channel
