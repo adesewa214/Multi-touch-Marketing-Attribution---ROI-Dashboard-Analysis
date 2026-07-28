@@ -37,7 +37,7 @@ Task 3 - Channel Performance Analysis.
 7. Touchpoints by Marketing Channel
 8. Performance Rating by Marketing Channel
 
-Task 4 - Campaign Performance Analysis
+Task 4 - Campaign Performance Analysis.
 1. Conversions by Campaign
 2. Revenue by Campaign
 3. Profit by Campaign
@@ -48,4 +48,11 @@ Task 4 - Campaign Performance Analysis
 8. Campaign Cost by Campaign
 9. Performance Rating by Campaign
 
-Task 5 - 
+Task 5 - Attribution Analysis.
+1. Monthly Conversion Trend
+2. Monthly Revenue Trend
+3. Monthly Profit Trend
+4. Conversions by Day of the Week
+5. Touchpoints by Hour of the Day
+6. Conversions by Hour of the Day
+7. Monthly Revenue by Marketing Channel
