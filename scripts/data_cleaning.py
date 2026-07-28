@@ -24,6 +24,35 @@ EXCEL_OUTPUT = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_
 
 df = pd.read_csv(INPUT_FILE)
 
+# ======================================================
+# VALIDATE REQUIRED COLUMNS
+# ======================================================
+
+required_columns = [
+    "User ID",
+    "Timestamp",
+    "Channel",
+    "Campaign",
+    "Conversion",
+    "Campaign_Cost_USD",
+    "Budget_USD",
+    "Revenue_USD",
+    "Profit_USD",
+    "ROI_%",
+    "ROAS",
+    "CPA_USD",
+    "Performance_Rating"
+]
+
+missing_columns = [
+    col for col in required_columns
+    if col not in df.columns
+]
+
+if missing_columns:
+    raise ValueError(f"Missing required columns: {missing_columns}")
+
+print("\nAll required columns are present.")
 print("=" * 60)
 print("DATASET LOADED SUCCESSFULLY")
 print("=" * 60)
@@ -204,3 +233,14 @@ print("=" * 60)
 
 print(f"\nCSV File   : {CSV_OUTPUT}")
 print(f"Excel File : {EXCEL_OUTPUT}")
+
+print("\n" + "=" * 60)
+print("DATA CLEANING SUMMARY")
+print("=" * 60)
+
+print(f"Total Rows Processed        : {len(df)}")
+print(f"Total Columns              : {len(df.columns)}")
+print(f"Remaining Missing Values   : {df.isnull().sum().sum()}")
+print(f"Duplicate Records Removed  : {duplicates_before}")
+print("Profit Validation          : PASSED")
+print("Dataset Status             : Ready for SQL & Dashboard Analysis")
