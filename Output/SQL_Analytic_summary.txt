@@ -36,3 +36,16 @@ Task 3 - Channel Performance Analysis.
 6. Conversion Rate by Marketing Channel
 7. Touchpoints by Marketing Channel
 8. Performance Rating by Marketing Channel
+
+Task 4 - Campaign Performance Analysis
+1. Conversions by Campaign
+2. Revenue by Campaign
+3. Profit by Campaign
+4. Average ROI by Campaign
+5. Average CPA by Campaign
+6. Conversion Rate by Campaign
+7. Budget Allocation by Campaign
+8. Campaign Cost by Campaign
+9. Performance Rating by Campaign
+
+Task 5 - 
