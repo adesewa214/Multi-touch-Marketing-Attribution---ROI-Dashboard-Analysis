@@ -244,3 +244,38 @@ print(f"Remaining Missing Values   : {df.isnull().sum().sum()}")
 print(f"Duplicate Records Removed  : {duplicates_before}")
 print("Profit Validation          : PASSED")
 print("Dataset Status             : Ready for SQL & Dashboard Analysis")
+
+# ======================================================
+# DATA QUALITY VALIDATION
+# ======================================================
+
+print("\n" + "=" * 60)
+print("DATA QUALITY VALIDATION")
+print("=" * 60)
+
+# Check for negative monetary values
+money_columns = [
+    "Campaign_Cost_USD",
+    "Budget_USD",
+    "Revenue_USD",
+    "Profit_USD",
+    "ROI_%",
+    "ROAS",
+    "CPA_USD"
+]
+
+for col in money_columns:
+    negative_count = (df[col] < 0).sum()
+    print(f"{col}: {negative_count} negative value(s)")
+
+# Validate Conversion values
+valid_conversion = df["Conversion"].isin([0, 1]).all()
+
+if valid_conversion:
+    print("\nConversion column validation: PASSED")
+else:
+    print("\nConversion column validation: FAILED")
+
+# Check for missing timestamps
+missing_timestamp = df["Timestamp"].isna().sum()
+print(f"Missing Timestamp values: {missing_timestamp}")
