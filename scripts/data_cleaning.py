@@ -212,6 +212,25 @@ print(df.isnull().sum())
 df["CPA_USD"] = df["CPA_USD"].fillna(0).round(2)
 
 # ======================================================
+# DATA CLEANING SUMMARY
+# ======================================================
+
+print("\n" + "=" * 60)
+print("DATA CLEANING SUMMARY")
+print("=" * 60)
+
+print(f"Total Records Processed      : {len(df)}")
+print(f"Total Columns               : {len(df.columns)}")
+print(f"Duplicate Records Removed   : {duplicates_before}")
+print(f"Missing Values Remaining    : {df.isnull().sum().sum()}")
+print(f"Missing CPA Values Filled   : {missing_cpa}")
+
+print("\nDataset is ready for:")
+print("- SQL Analysis")
+print("- Dashboard Development")
+print("- ROI & Marketing Attribution Analysis")
+
+# ======================================================
 # EXPORT
 # ======================================================
 
