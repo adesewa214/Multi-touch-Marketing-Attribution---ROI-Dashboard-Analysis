@@ -231,6 +231,26 @@ print("- Dashboard Development")
 print("- ROI & Marketing Attribution Analysis")
 
 # ======================================================
+# CLEANED DATASET STATISTICS
+# ======================================================
+
+print("\n" + "=" * 60)
+print("CLEANED DATASET STATISTICS")
+print("=" * 60)
+
+print(f"Unique Users              : {df['User ID'].nunique()}")
+print(f"Unique Channels           : {df['Channel'].nunique()}")
+print(f"Unique Campaigns          : {df['Campaign'].nunique()}")
+print(f"Successful Conversions    : {df['Conversion'].sum()}")
+print(f"Total Touchpoints         : {len(df)}")
+
+print("\nChannel Distribution:")
+print(df["Channel"].value_counts())
+
+print("\nPerformance Rating Distribution:")
+print(df["Performance_Rating"].value_counts())
+
+# ======================================================
 # EXPORT
 # ======================================================
 
