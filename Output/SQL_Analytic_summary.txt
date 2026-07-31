@@ -69,10 +69,10 @@ To determine how different marketing channels and campaigns contribute to custom
 Task 6 - Time & Trend Analysis
 To analyze how marketing performance changes over time by identifying trends in conversions, revenue, profit, customer interactions, and channel performance across different months, days, and hours. This helps businesses recognize seasonality, optimize campaign timing, and improve future marketing strategies.
 
-1. Monthly Conversion Trend
-2. Monthly Revenue Trend
-3. Monthly Profit Trend
-4. Conversions by Day of the Week
-5. Touchpoints by Hour of the Day
-6. Conversions by Hour of the Day
-7. Monthly Revenue by Marketing Channel
+1. Monthly Conversion Trend.
+2. Monthly Revenue Trend.
+3. Monthly Profit Trend.
+4. Conversions by Day of the Week.
+5. Touchpoints by Hour of the Day.
+6. Conversions by Hour of the Day.
+7. Monthly Revenue by Marketing Channel.
