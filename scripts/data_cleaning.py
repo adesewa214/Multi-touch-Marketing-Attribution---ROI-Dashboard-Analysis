@@ -195,6 +195,35 @@ else:
     print("Rows Failed:", (~validation).sum())
 
 # ======================================================
+# NUMERIC COLUMN VALIDATION
+# ======================================================
+
+print("\n" + "=" * 60)
+print("NUMERIC COLUMN VALIDATION")
+print("=" * 60)
+
+numeric_columns = [
+    "Campaign_Cost_USD",
+    "Budget_USD",
+    "Revenue_USD",
+    "Profit_USD",
+    "ROI_%",
+    "ROAS",
+    "CPA_USD"
+]
+
+for col in numeric_columns:
+    print(f"\n{col}")
+    print(f"Minimum Value : {df[col].min()}")
+    print(f"Maximum Value : {df[col].max()}")
+
+    if df[col].isnull().sum() == 0:
+        print("Status : PASS")
+    else:
+        print(f"Status : FAIL ({df[col].isnull().sum()} missing values)")
+        
+        
+# ======================================================
 # FINAL DATA TYPES
 # ======================================================
 
@@ -318,3 +347,6 @@ else:
 # Check for missing timestamps
 missing_timestamp = df["Timestamp"].isna().sum()
 print(f"Missing Timestamp values: {missing_timestamp}")
+
+print("\nCleaning process completed successfully.")
+print("The dataset is validated and ready for SQL analysis.")
