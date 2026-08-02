@@ -5,66 +5,66 @@ Dataset: Multi touch Marketing Attribution ROI Dashboard Analysis
 Task 1 - KPI Analysis.
 To provide a high-level summary of the overall marketing performance by tracking key metrics such as customers, conversions, revenue, profit, ROI, CPA, and budget utilization. This section helps stakeholders quickly assess whether marketing efforts are meeting business objectives.
 
-1. Total Customers	
-2. Total Touchpoints	
-3. Total Conversions	
-4. Conversion Rate 
-5. Total Revenue 
-6. Total Profit 
-7. Average ROI 
-8. Average CPA 
-9. Total Campaign Cost 
-10.Total Budget 
-11.Budget Utilization
-12.Profit Margin	
-13.Average Revenue per Customer 
-14.Average Profit per Customer
+1. Total Customers.	
+2. Total Touchpoints.	
+3. Total Conversions.	
+4. Conversion Rate. 
+5. Total Revenue. 
+6. Total Profit. 
+7. Average ROI. 
+8. Average CPA. 
+9. Total Campaign Cost.
+10.Total Budget.
+11.Budget Utilization.
+12.Profit Margin.
+13.Average Revenue per Customer.
+14.Average Profit per Customer.
 
 Task 2 - Customer Journey Analysis. 
 To understand how customers interact with the business before converting by analyzing their journey length, touchpoint distribution, and time to conversion. This helps identify customer behavior patterns and optimize the conversion funnel.
 
-1. Customer Journey Length by User
-2. Average Customer Journey Length
-3. Touchpoint Order Distribution
-4. Top 10 Customers with the Longest Conversion Journey
-5. Average Time to Conversion
-6. Top 10 Customers with the Longest Conversion Time
+1. Customer Journey Length by User.
+2. Average Customer Journey Length.
+3. Touchpoint Order Distribution.
+4. Top 10 Customers with the Longest Conversion Journey.
+5. Average Time to Conversion.
+6. Top 10 Customers with the Longest Conversion Time.
 
 Task 3 - Channel Performance Analysis. 
 To evaluate the effectiveness of each marketing channel by measuring conversions, revenue, profit, ROI, CPA, and conversion rates. The goal is to identify the most effective channels and guide budget allocation toward high-performing marketing channels.
 
-1. Conversions by Marketing Channel
-2. Revenue by Marketing Channel
-3. Profit by Marketing Channel
-4. Average ROI by Marketing Channel
-5. Average CPA by Marketing Channel
-6. Conversion Rate by Marketing Channel
-7. Touchpoints by Marketing Channel
-8. Performance Rating by Marketing Channel
+1. Conversions by Marketing Channel.
+2. Revenue by Marketing Channel.
+3. Profit by Marketing Channel.
+4. Average ROI by Marketing Channel.
+5. Average CPA by Marketing Channel.
+6. Conversion Rate by Marketing Channel.
+7. Touchpoints by Marketing Channel.
+8. Performance Rating by Marketing Channel.
 
 Task 4 - Campaign Performance Analysis.
 To assess the performance of individual marketing campaigns by comparing their conversions, revenue, profit, ROI, CPA, budget allocation, and costs. This enables businesses to identify successful campaigns, optimize underperforming ones, and maximize marketing return on investment.
 
-1. Conversions by Campaign
-2. Revenue by Campaign
-3. Profit by Campaign
-4. Average ROI by Campaign
-5. Average CPA by Campaign
-6. Conversion Rate by Campaign
-7. Budget Allocation by Campaign
-8. Campaign Cost by Campaign
-9. Performance Rating by Campaign
+1. Conversions by Campaign.
+2. Revenue by Campaign.
+3. Profit by Campaign.
+4. Average ROI by Campaign.
+5. Average CPA by Campaign.
+6. Conversion Rate by Campaign.
+7. Budget Allocation by Campaign.
+8. Campaign Cost by Campaign.
+9. Performance Rating by Campaign.
 
 Task 5 - Attribution Analysis.
 To determine how different marketing channels and campaigns contribute to customer conversions throughout the customer journey. This section identifies which touchpoints initiate, influence, and complete conversions, enabling more accurate attribution of marketing success and informed investment decisions.
 
-1. Monthly Conversion Trend
-2. Monthly Revenue Trend
-3. Monthly Profit Trend
-4. Conversions by Day of the Week
-5. Touchpoints by Hour of the Day
-6. Conversions by Hour of the Day
-7. Monthly Revenue by Marketing Channel
+1. Monthly Conversion Trend.
+2. Monthly Revenue Trend.
+3. Monthly Profit Trend.
+4. Conversions by Day of the Week.
+5. Touchpoints by Hour of the Day.
+6. Conversions by Hour of the Day.
+7. Monthly Revenue by Marketing Channel.
 
 Task 6 - Time & Trend Analysis
 To analyze how marketing performance changes over time by identifying trends in conversions, revenue, profit, customer interactions, and channel performance across different months, days, and hours. This helps businesses recognize seasonality, optimize campaign timing, and improve future marketing strategies.
