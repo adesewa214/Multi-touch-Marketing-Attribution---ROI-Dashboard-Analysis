@@ -314,6 +314,29 @@ print("Profit Validation          : PASSED")
 print("Dataset Status             : Ready for SQL & Dashboard Analysis")
 
 # ======================================================
+# GENERATE CLEANING REPORT
+# ======================================================
+
+with open(REPORT_OUTPUT, "w") as report:
+
+    report.write("MULTI-TOUCH MARKETING ATTRIBUTION & ROI DASHBOARD\n")
+    report.write("DATA CLEANING REPORT\n")
+    report.write("=" * 60 + "\n\n")
+
+    report.write(f"Total Records            : {len(df)}\n")
+    report.write(f"Total Columns            : {len(df.columns)}\n")
+    report.write(f"Duplicate Records Removed: {duplicates_before}\n")
+    report.write(f"Missing Values Remaining : {df.isnull().sum().sum()}\n")
+    report.write(f"Missing CPA Filled       : {missing_cpa}\n")
+    report.write(f"Unique Users             : {df['User ID'].nunique()}\n")
+    report.write(f"Unique Channels          : {df['Channel'].nunique()}\n")
+    report.write(f"Unique Campaigns         : {df['Campaign'].nunique()}\n")
+    report.write(f"Successful Conversions   : {df['Conversion'].sum()}\n")
+
+print("\nCleaning report generated successfully.")
+print(f"Report File : {REPORT_OUTPUT}")
+
+# ======================================================
 # DATA QUALITY VALIDATION
 # ======================================================
 
