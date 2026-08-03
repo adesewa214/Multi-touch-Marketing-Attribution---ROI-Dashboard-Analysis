@@ -65,6 +65,9 @@ print(df.shape)
 
 print("\nDataset Information:")
 print(df.info())
+memory = df.memory_usage(deep=True).sum() / (1024 ** 2)
+
+print(f"\nMemory Usage: {memory:.2f} MB")
 
 print("\nFirst Five Rows:")
 print(df.head())
