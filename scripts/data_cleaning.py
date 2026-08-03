@@ -1,3 +1,4 @@
+import time
 # ======================================================
 # Project: Multi-Touch Marketing Attribution & ROI Dashboard
 # Phase: Data Cleaning
@@ -17,6 +18,8 @@ INPUT_FILE = BASE_DIR / "data" / "raw" / "final_multi_touch_attribution_roi_data
 CSV_OUTPUT = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_data.csv"
 
 EXCEL_OUTPUT = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_data.xlsx"
+
+start_time = time.time()
 
 # ======================================================
 # LOAD DATA
@@ -373,3 +376,7 @@ print(f"Missing Timestamp values: {missing_timestamp}")
 
 print("\nCleaning process completed successfully.")
 print("The dataset is validated and ready for SQL analysis.")
+
+end_time = time.time()
+
+print(f"\nExecution Time: {end_time - start_time:.2f} seconds")
