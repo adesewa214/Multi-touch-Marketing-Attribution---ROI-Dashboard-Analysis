@@ -290,7 +290,8 @@ CSV_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
 
 df.to_csv(
     CSV_OUTPUT,
-    index=False
+    index=False,
+    encoding="utf-8-sig"
 )
 
 df.to_excel(
