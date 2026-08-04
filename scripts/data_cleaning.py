@@ -22,6 +22,18 @@ EXCEL_OUTPUT = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_
 start_time = time.time()
 
 # ======================================================
+# SCRIPT INFORMATION
+# ======================================================
+
+SCRIPT_VERSION = "1.0"
+PROJECT_NAME = "Multi-Touch Marketing Attribution & ROI Dashboard"
+
+print("=" * 60)
+print(PROJECT_NAME)
+print(f"Cleaning Script Version : {SCRIPT_VERSION}")
+print("=" * 60)
+
+# ======================================================
 # LOAD DATA
 # ======================================================
 
@@ -285,9 +297,14 @@ print(df["Channel"].value_counts())
 print("\nPerformance Rating Distribution:")
 print(df["Performance_Rating"].value_counts())
 
+
+print("\nCleaning completed successfully.")
+print(f"Exporting cleaned dataset with {len(df)} records...")
 # ======================================================
 # EXPORT
 # ======================================================
+
+
 
 CSV_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
 
@@ -319,6 +336,9 @@ print(f"Remaining Missing Values   : {df.isnull().sum().sum()}")
 print(f"Duplicate Records Removed  : {duplicates_before}")
 print("Profit Validation          : PASSED")
 print("Dataset Status             : Ready for SQL & Dashboard Analysis")
+print("\nExport Status : SUCCESS")
+print("CSV and Excel files generated successfully.")
+
 
 # ======================================================
 # GENERATE CLEANING REPORT
