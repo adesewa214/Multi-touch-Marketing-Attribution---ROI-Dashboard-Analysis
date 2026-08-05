@@ -141,6 +141,20 @@ df = df.dropna(subset=["Timestamp"])
 # -----------------------------
 df["User ID"] = df["User ID"].astype(int)
 
+# ======================================================
+# DATASET DATE RANGE
+# ======================================================
+
+print("\n" + "=" * 60)
+print("DATASET DATE RANGE")
+print("=" * 60)
+
+print(f"Start Date : {df['Timestamp'].min()}")
+print(f"End Date   : {df['Timestamp'].max()}")
+
+total_days = (df["Timestamp"].max() - df["Timestamp"].min()).days + 1
+print(f"Total Days : {total_days}")
+
 # -----------------------------
 # Conversion Yes/No -> 1/0
 # -----------------------------
