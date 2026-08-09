@@ -155,6 +155,24 @@ print(f"End Date   : {df['Timestamp'].max()}")
 total_days = (df["Timestamp"].max() - df["Timestamp"].min()).days + 1
 print(f"Total Days : {total_days}")
 
+# ======================================================
+# CONVERSION VALUE VALIDATION
+# ======================================================
+
+print("\n" + "=" * 60)
+print("CONVERSION VALUE VALIDATION")
+print("=" * 60)
+
+valid_conversion_values = {"Yes", "No"}
+
+invalid_conversion_values = set(df["Conversion"].dropna().unique()) - valid_conversion_values
+
+if invalid_conversion_values:
+    print(f"FAIL : Unexpected Conversion values found: {invalid_conversion_values}")
+    raise ValueError("Invalid values found in Conversion column.")
+else:
+    print("PASS : Conversion column contains only Yes/No values.")
+    
 # -----------------------------
 # Conversion Yes/No -> 1/0
 # -----------------------------
