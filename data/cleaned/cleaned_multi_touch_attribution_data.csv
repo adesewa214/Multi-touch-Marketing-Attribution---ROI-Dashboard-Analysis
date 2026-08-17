@@ -1,4 +1,4 @@
-User ID,Timestamp,Channel,Campaign,Conversion,Campaign_Cost_USD,Budget_USD,Revenue_USD,Profit_USD,ROI_%,ROAS,CPA_USD,Performance_Rating,Touchpoint_Order
+﻿User ID,Timestamp,Channel,Campaign,Conversion,Campaign_Cost_USD,Budget_USD,Revenue_USD,Profit_USD,ROI_%,ROAS,CPA_USD,Performance_Rating,Touchpoint_Order
 10028,2025-10-02 01:44:12,Search Ads,Discount Offer,1,1.13,1.33,151.02,149.89,600.0,7.0,1.13,Excellent,1
 10028,2025-11-02 01:03:57,Display Ads,No Campaign,1,1.43,1.86,163.03,161.6,600.0,7.0,1.43,Excellent,2
 10045,2025-10-02 17:20:43,Search Ads,Discount Offer,0,2.47,2.99,0.0,-2.47,-99.98,0.0,0.0,Poor,1

@@ -1,25 +1,13 @@
-import time
 # ======================================================
 # Project: Multi-Touch Marketing Attribution & ROI Dashboard
 # Phase: Data Cleaning
 # ======================================================
 
+import time
 from pathlib import Path
+
 import pandas as pd
 
-# ======================================================
-# FILE PATHS
-# ======================================================
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-INPUT_FILE = BASE_DIR / "data" / "raw" / "final_multi_touch_attribution_roi_dataset_v2.csv"
-
-CSV_OUTPUT = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_data.csv"
-
-EXCEL_OUTPUT = BASE_DIR / "data" / "cleaned" / "cleaned_multi_touch_attribution_data.xlsx"
-
-start_time = time.time()
 
 # ======================================================
 # SCRIPT INFORMATION
@@ -28,16 +16,63 @@ start_time = time.time()
 SCRIPT_VERSION = "1.0"
 PROJECT_NAME = "Multi-Touch Marketing Attribution & ROI Dashboard"
 
+start_time = time.time()
+
 print("=" * 60)
 print(PROJECT_NAME)
-print(f"Cleaning Script Version : {SCRIPT_VERSION}")
+print("Phase: Data Cleaning")
+print(f"Cleaning Script Version: {SCRIPT_VERSION}")
 print("=" * 60)
 
+
 # ======================================================
-# LOAD DATA
+# FILE PATHS
+# ======================================================
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+INPUT_FILE = (
+    BASE_DIR
+    / "data"
+    / "raw"
+    / "final_multi_touch_attribution_roi_dataset_v2.csv"
+)
+
+CSV_OUTPUT = (
+    BASE_DIR
+    / "data"
+    / "cleaned"
+    / "cleaned_multi_touch_attribution_data.csv"
+)
+
+EXCEL_OUTPUT = (
+    BASE_DIR
+    / "data"
+    / "cleaned"
+    / "cleaned_multi_touch_attribution_data.xlsx"
+)
+
+REPORT_OUTPUT = (
+    BASE_DIR
+    / "data"
+    / "cleaned"
+    / "cleaning_report.txt"
+)
+
+
+# ======================================================
+# LOAD DATASET
 # ======================================================
 
 df = pd.read_csv(INPUT_FILE)
+
+print("\n" + "=" * 60)
+print("DATASET LOADED SUCCESSFULLY")
+print("=" * 60)
+
+print("\nDataset Shape:")
+print(df.shape)
+
 
 # ======================================================
 # VALIDATE REQUIRED COLUMNS
@@ -60,55 +95,81 @@ required_columns = [
 ]
 
 missing_columns = [
-    col for col in required_columns
-    if col not in df.columns
+    column
+    for column in required_columns
+    if column not in df.columns
 ]
 
 if missing_columns:
-    raise ValueError(f"Missing required columns: {missing_columns}")
+    raise ValueError(
+        f"Missing required columns: {missing_columns}"
+    )
 
-print("\nAll required columns are present.")
-print("=" * 60)
-print("DATASET LOADED SUCCESSFULLY")
-print("=" * 60)
+print("\nRequired column validation: PASSED")
 
-print("\nDataset Shape:")
-print(df.shape)
+
+# ======================================================
+# INITIAL DATASET INFORMATION
+# ======================================================
 
 print("\nDataset Information:")
-print(df.info())
-memory = df.memory_usage(deep=True).sum() / (1024 ** 2)
+df.info()
 
-print(f"\nMemory Usage: {memory:.2f} MB")
+memory_usage = (
+    df.memory_usage(deep=True).sum()
+    / (1024 ** 2)
+)
+
+print(f"\nMemory Usage: {memory_usage:.2f} MB")
 
 print("\nFirst Five Rows:")
 print(df.head())
 
-print("\nMissing Values:")
+print("\nInitial Missing Values:")
 print(df.isnull().sum())
 
-print("\nDuplicate Records:")
-print(df.duplicated().sum())
+initial_duplicates = df.duplicated().sum()
+
+print("\nInitial Duplicate Records:")
+print(initial_duplicates)
 
 print("\nStatistical Summary:")
 print(df.describe(include="all"))
 
+
 # ======================================================
-# DATA CLEANING
+# START DATA CLEANING
 # ======================================================
 
 print("\n" + "=" * 60)
 print("STARTING DATA CLEANING")
 print("=" * 60)
 
-# -----------------------------
-# Remove duplicate rows
-# -----------------------------
+
+# ======================================================
+# 1. REMOVE DUPLICATES
+# ======================================================
+
+duplicates_before = df.duplicated().sum()
+
 df = df.drop_duplicates()
 
-# -----------------------------
-# Trim spaces
-# -----------------------------
+duplicates_after = df.duplicated().sum()
+
+duplicates_removed = (
+    duplicates_before - duplicates_after
+)
+
+print("\nDuplicate Records:")
+print(f"Before Cleaning : {duplicates_before}")
+print(f"After Cleaning  : {duplicates_after}")
+print(f"Removed         : {duplicates_removed}")
+
+
+# ======================================================
+# 2. CLEAN TEXT COLUMNS
+# ======================================================
+
 text_columns = [
     "Channel",
     "Campaign",
@@ -116,141 +177,206 @@ text_columns = [
     "Performance_Rating"
 ]
 
-for col in text_columns:
-    df[col] = df[col].astype(str).str.strip()
+for column in text_columns:
+    df[column] = (
+        df[column]
+        .astype("string")
+        .str.strip()
+    )
 
-# -----------------------------
-# Replace '-' campaign
-# -----------------------------
-df["Campaign"] = df["Campaign"].replace("-", "No Campaign")
+print("\nText columns cleaned successfully.")
 
-# -----------------------------
-# Timestamp -> Datetime
-# -----------------------------
+
+# ======================================================
+# 3. HANDLE MISSING CAMPAIGN LABEL
+# ======================================================
+
+missing_campaign_count = (
+    df["Campaign"]
+    .eq("-")
+    .sum()
+)
+
+df["Campaign"] = df["Campaign"].replace(
+    "-",
+    "No Campaign"
+)
+
+print(
+    f"\nCampaign '-' values replaced: "
+    f"{missing_campaign_count}"
+)
+
+
+# ======================================================
+# 4. CONVERT TIMESTAMP TO DATETIME
+# ======================================================
+
 df["Timestamp"] = pd.to_datetime(
     df["Timestamp"],
     dayfirst=True,
     errors="coerce"
 )
 
-# Remove invalid timestamps
-df = df.dropna(subset=["Timestamp"])
+invalid_timestamp_count = (
+    df["Timestamp"].isna().sum()
+)
 
-# -----------------------------
-# User ID Integer
-# -----------------------------
-df["User ID"] = df["User ID"].astype(int)
+if invalid_timestamp_count > 0:
+
+    print(
+        f"\nInvalid timestamps found: "
+        f"{invalid_timestamp_count}"
+    )
+
+    df = df.dropna(
+        subset=["Timestamp"]
+    )
+
+else:
+
+    print(
+        "\nTimestamp conversion: PASSED"
+    )
+
 
 # ======================================================
-# DATASET DATE RANGE
+# 5. DATASET DATE RANGE
 # ======================================================
 
 print("\n" + "=" * 60)
 print("DATASET DATE RANGE")
 print("=" * 60)
 
-print(f"Start Date : {df['Timestamp'].min()}")
-print(f"End Date   : {df['Timestamp'].max()}")
+start_date = df["Timestamp"].min()
+end_date = df["Timestamp"].max()
 
-total_days = (df["Timestamp"].max() - df["Timestamp"].min()).days + 1
+total_days = (
+    end_date - start_date
+).days + 1
+
+print(f"Start Date : {start_date}")
+print(f"End Date   : {end_date}")
 print(f"Total Days : {total_days}")
 
+
 # ======================================================
-# CONVERSION VALUE VALIDATION
+# 6. USER ID DATA TYPE
+# ======================================================
+
+df["User ID"] = pd.to_numeric(
+    df["User ID"],
+    errors="coerce"
+)
+
+invalid_user_ids = (
+    df["User ID"].isna().sum()
+)
+
+if invalid_user_ids > 0:
+
+    print(
+        f"\nInvalid User IDs found: "
+        f"{invalid_user_ids}"
+    )
+
+    df = df.dropna(
+        subset=["User ID"]
+    )
+
+df["User ID"] = df["User ID"].astype(int)
+
+print("\nUser ID conversion: PASSED")
+
+
+# ======================================================
+# 7. VALIDATE CONVERSION VALUES
 # ======================================================
 
 print("\n" + "=" * 60)
 print("CONVERSION VALUE VALIDATION")
 print("=" * 60)
 
-valid_conversion_values = {"Yes", "No"}
+valid_conversion_values = {
+    "Yes",
+    "No"
+}
 
-invalid_conversion_values = set(df["Conversion"].dropna().unique()) - valid_conversion_values
+actual_conversion_values = set(
+    df["Conversion"]
+    .dropna()
+    .unique()
+)
+
+invalid_conversion_values = (
+    actual_conversion_values
+    - valid_conversion_values
+)
 
 if invalid_conversion_values:
-    print(f"FAIL : Unexpected Conversion values found: {invalid_conversion_values}")
-    raise ValueError("Invalid values found in Conversion column.")
-else:
-    print("PASS : Conversion column contains only Yes/No values.")
-    
-# -----------------------------
-# Conversion Yes/No -> 1/0
-# -----------------------------
+
+    raise ValueError(
+        "Unexpected Conversion values found: "
+        f"{invalid_conversion_values}"
+    )
+
+print(
+    "Conversion source values: "
+    "PASSED"
+)
+
+
+# ======================================================
+# 8. CONVERT CONVERSION TO 1/0
+# ======================================================
+
 df["Conversion"] = (
     df["Conversion"]
-      .replace({
-          "Yes": 1,
-          "No": 0
-      })
-      .astype(int)
+    .replace(
+        {
+            "Yes": 1,
+            "No": 0
+        }
+    )
+    .astype(int)
 )
 
-# -----------------------------
-# Sort user journey
-# -----------------------------
+print(
+    "Conversion converted from "
+    "Yes/No to 1/0."
+)
+
+
+# ======================================================
+# 9. SORT USER JOURNEY
+# ======================================================
+
 df = df.sort_values(
-    by=["User ID", "Timestamp"]
-)
+    by=[
+        "User ID",
+        "Timestamp"
+    ]
+).reset_index(drop=True)
 
-# -----------------------------
-# Touchpoint Order
-# -----------------------------
+
+# ======================================================
+# 10. CREATE TOUCHPOINT ORDER
+# ======================================================
+
 df["Touchpoint_Order"] = (
     df.groupby("User ID")
-      .cumcount()
-      + 1
+    .cumcount()
+    + 1
 )
 
-# ======================================================
-# ROUND NUMERIC VALUES
-# ======================================================
-
-money_columns = [
-    "Campaign_Cost_USD",
-    "Budget_USD",
-    "Revenue_USD",
-    "ROI_%",
-    "ROAS",
-    "CPA_USD"
-]
-
-for col in money_columns:
-    df[col] = df[col].round(2)
-
-# ======================================================
-# FIX PROFIT
-# ======================================================
-
-df["Profit_USD"] = (
-    df["Revenue_USD"]
-    - df["Campaign_Cost_USD"]
-).round(2)
-
-# ======================================================
-# VALIDATION
-# ======================================================
-
-validation = (
-    df["Profit_USD"]
-    ==
-    (df["Revenue_USD"] - df["Campaign_Cost_USD"]).round(2)
+print(
+    "\nTouchpoint order created successfully."
 )
 
-print("\nProfit Validation:")
-
-if validation.all():
-    print("PASS : Profit column is correct.")
-else:
-    print("FAIL : Profit column has inconsistencies.")
-    print("Rows Failed:", (~validation).sum())
 
 # ======================================================
-# NUMERIC COLUMN VALIDATION
+# 11. ROUND NUMERIC VALUES
 # ======================================================
-
-print("\n" + "=" * 60)
-print("NUMERIC COLUMN VALIDATION")
-print("=" * 60)
 
 numeric_columns = [
     "Campaign_Cost_USD",
@@ -262,20 +388,201 @@ numeric_columns = [
     "CPA_USD"
 ]
 
-for col in numeric_columns:
-    print(f"\n{col}")
-    print(f"Minimum Value : {df[col].min()}")
-    print(f"Maximum Value : {df[col].max()}")
+for column in numeric_columns:
 
-    if df[col].isnull().sum() == 0:
+    df[column] = pd.to_numeric(
+        df[column],
+        errors="coerce"
+    )
+
+    df[column] = df[column].round(2)
+
+print(
+    "\nNumeric columns standardized "
+    "and rounded to 2 decimal places."
+)
+
+
+# ======================================================
+# 12. FILL MISSING CPA VALUES
+# ======================================================
+
+missing_cpa = (
+    df["CPA_USD"]
+    .isna()
+    .sum()
+)
+
+df["CPA_USD"] = (
+    df["CPA_USD"]
+    .fillna(0)
+    .round(2)
+)
+
+print(
+    f"\nMissing CPA values replaced with 0: "
+    f"{missing_cpa}"
+)
+
+
+# ======================================================
+# 13. RECALCULATE PROFIT
+# ======================================================
+
+df["Profit_USD"] = (
+    df["Revenue_USD"]
+    - df["Campaign_Cost_USD"]
+).round(2)
+
+print(
+    "\nProfit column recalculated successfully."
+)
+
+
+# ======================================================
+# 14. PROFIT VALIDATION
+# ======================================================
+
+profit_validation = (
+    df["Profit_USD"]
+    ==
+    (
+        df["Revenue_USD"]
+        - df["Campaign_Cost_USD"]
+    ).round(2)
+)
+
+print("\nProfit Validation:")
+
+if profit_validation.all():
+
+    print(
+        "PASS : Profit column is correct."
+    )
+
+else:
+
+    failed_profit_rows = (
+        ~profit_validation
+    ).sum()
+
+    print(
+        "FAIL : Profit column has "
+        "inconsistencies."
+    )
+
+    print(
+        f"Rows Failed: {failed_profit_rows}"
+    )
+
+
+# ======================================================
+# 15. NUMERIC COLUMN VALIDATION
+# ======================================================
+
+print("\n" + "=" * 60)
+print("NUMERIC COLUMN VALIDATION")
+print("=" * 60)
+
+for column in numeric_columns:
+
+    missing_count = (
+        df[column]
+        .isna()
+        .sum()
+    )
+
+    print(f"\n{column}")
+    print(
+        f"Minimum Value : "
+        f"{df[column].min()}"
+    )
+
+    print(
+        f"Maximum Value : "
+        f"{df[column].max()}"
+    )
+
+    if missing_count == 0:
+
         print("Status : PASS")
+
     else:
-        print(f"Status : FAIL ({df[col].isnull().sum()} missing values)")
-        
-        
+
+        print(
+            f"Status : FAIL "
+            f"({missing_count} missing values)"
+        )
+
+
 # ======================================================
-# FINAL DATA TYPES
+# 16. DATA QUALITY VALIDATION
 # ======================================================
+
+print("\n" + "=" * 60)
+print("DATA QUALITY VALIDATION")
+print("=" * 60)
+
+
+# Check negative values
+negative_value_counts = {}
+
+for column in numeric_columns:
+
+    negative_count = (
+        df[column] < 0
+    ).sum()
+
+    negative_value_counts[column] = (
+        negative_count
+    )
+
+    print(
+        f"{column}: "
+        f"{negative_count} negative value(s)"
+    )
+
+
+# Validate Conversion
+valid_conversion = (
+    df["Conversion"]
+    .isin([0, 1])
+    .all()
+)
+
+if valid_conversion:
+
+    print(
+        "\nConversion column validation: "
+        "PASSED"
+    )
+
+else:
+
+    print(
+        "\nConversion column validation: "
+        "FAILED"
+    )
+
+
+# Validate Timestamp
+missing_timestamp = (
+    df["Timestamp"].isna().sum()
+)
+
+print(
+    f"Missing Timestamp values: "
+    f"{missing_timestamp}"
+)
+
+
+# ======================================================
+# 17. FINAL DATASET INFORMATION
+# ======================================================
+
+print("\n" + "=" * 60)
+print("FINAL DATASET INFORMATION")
+print("=" * 60)
 
 print("\nUpdated Data Types:")
 print(df.dtypes)
@@ -283,62 +590,192 @@ print(df.dtypes)
 print("\nFinal Dataset Shape:")
 print(df.shape)
 
+final_missing_values = (
+    df.isnull().sum()
+)
+
 print("\nMissing Values After Cleaning:")
-print(df.isnull().sum())
-# -----------------------------
-# Fill missing CPA values with 0
-# -----------------------------
-df["CPA_USD"] = df["CPA_USD"].fillna(0).round(2)
+print(final_missing_values)
+
+total_remaining_missing = (
+    final_missing_values.sum()
+)
+
 
 # ======================================================
-# DATA CLEANING SUMMARY
-# ======================================================
-
-print("\n" + "=" * 60)
-print("DATA CLEANING SUMMARY")
-print("=" * 60)
-
-print(f"Total Records Processed      : {len(df)}")
-print(f"Total Columns               : {len(df.columns)}")
-print(f"Duplicate Records Removed   : {duplicates_before}")
-print(f"Missing Values Remaining    : {df.isnull().sum().sum()}")
-print(f"Missing CPA Values Filled   : {missing_cpa}")
-
-print("\nDataset is ready for:")
-print("- SQL Analysis")
-print("- Dashboard Development")
-print("- ROI & Marketing Attribution Analysis")
-
-# ======================================================
-# CLEANED DATASET STATISTICS
+# 18. CLEANED DATASET STATISTICS
 # ======================================================
 
 print("\n" + "=" * 60)
 print("CLEANED DATASET STATISTICS")
 print("=" * 60)
 
-print(f"Unique Users              : {df['User ID'].nunique()}")
-print(f"Unique Channels           : {df['Channel'].nunique()}")
-print(f"Unique Campaigns          : {df['Campaign'].nunique()}")
-print(f"Successful Conversions    : {df['Conversion'].sum()}")
-print(f"Total Touchpoints         : {len(df)}")
+unique_users = (
+    df["User ID"].nunique()
+)
+
+unique_channels = (
+    df["Channel"].nunique()
+)
+
+unique_campaigns = (
+    df["Campaign"].nunique()
+)
+
+successful_conversions = (
+    df["Conversion"].sum()
+)
+
+total_touchpoints = len(df)
+
+print(
+    f"Unique Users           : "
+    f"{unique_users}"
+)
+
+print(
+    f"Unique Channels        : "
+    f"{unique_channels}"
+)
+
+print(
+    f"Unique Campaigns       : "
+    f"{unique_campaigns}"
+)
+
+print(
+    f"Successful Conversions : "
+    f"{successful_conversions}"
+)
+
+print(
+    f"Total Touchpoints      : "
+    f"{total_touchpoints}"
+)
 
 print("\nChannel Distribution:")
-print(df["Channel"].value_counts())
+print(
+    df["Channel"]
+    .value_counts()
+)
 
 print("\nPerformance Rating Distribution:")
-print(df["Performance_Rating"].value_counts())
+print(
+    df["Performance_Rating"]
+    .value_counts()
+)
 
 
-print("\nCleaning completed successfully.")
-print(f"Exporting cleaned dataset with {len(df)} records...")
 # ======================================================
-# EXPORT
+# 19. CHANNEL-WISE CONVERSION SUMMARY
 # ======================================================
 
+print("\n" + "=" * 60)
+print("CHANNEL-WISE CONVERSION SUMMARY")
+print("=" * 60)
+
+channel_summary = (
+    df.groupby("Channel")
+    .agg(
+        Total_Touchpoints=(
+            "User ID",
+            "count"
+        ),
+        Total_Conversions=(
+            "Conversion",
+            "sum"
+        )
+    )
+)
+
+channel_summary[
+    "Conversion_Rate_%"
+] = (
+    channel_summary[
+        "Total_Conversions"
+    ]
+    /
+    channel_summary[
+        "Total_Touchpoints"
+    ]
+    * 100
+).round(2)
+
+print(channel_summary)
 
 
-CSV_OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+# ======================================================
+# 20. FINAL CLEANING SUMMARY
+# ======================================================
+
+print("\n" + "=" * 60)
+print("DATA CLEANING SUMMARY")
+print("=" * 60)
+
+print(
+    f"Initial Records          : "
+    f"{len(df) + duplicates_removed}"
+)
+
+print(
+    f"Final Records            : "
+    f"{len(df)}"
+)
+
+print(
+    f"Duplicate Records Removed: "
+    f"{duplicates_removed}"
+)
+
+print(
+    f"Missing CPA Filled       : "
+    f"{missing_cpa}"
+)
+
+print(
+    f"Remaining Missing Values : "
+    f"{total_remaining_missing}"
+)
+
+print(
+    "Profit Validation        : "
+    f"{'PASSED' if profit_validation.all() else 'FAILED'}"
+)
+
+print(
+    "Conversion Validation    : "
+    f"{'PASSED' if valid_conversion else 'FAILED'}"
+)
+
+print(
+    "\nDataset is ready for:"
+)
+
+print(
+    "- SQL Analysis"
+)
+
+print(
+    "- Dashboard Development"
+)
+
+print(
+    "- ROI & Marketing Attribution Analysis"
+)
+
+
+# ======================================================
+# 21. EXPORT CLEANED DATASET
+# ======================================================
+
+CSV_OUTPUT.parent.mkdir(
+    parents=True,
+    exist_ok=True
+)
+
+print("\n" + "=" * 60)
+print("EXPORTING CLEANED DATASET")
+print("=" * 60)
 
 df.to_csv(
     CSV_OUTPUT,
@@ -351,88 +788,148 @@ df.to_excel(
     index=False
 )
 
-print("\n" + "=" * 60)
-print("CLEANED DATASET EXPORTED SUCCESSFULLY")
-print("=" * 60)
+print(
+    "\nCSV and Excel files generated successfully."
+)
 
-print(f"\nCSV File   : {CSV_OUTPUT}")
-print(f"Excel File : {EXCEL_OUTPUT}")
+print(
+    f"\nCSV File   : {CSV_OUTPUT}"
+)
 
-print("\n" + "=" * 60)
-print("DATA CLEANING SUMMARY")
-print("=" * 60)
-
-print(f"Total Rows Processed        : {len(df)}")
-print(f"Total Columns              : {len(df.columns)}")
-print(f"Remaining Missing Values   : {df.isnull().sum().sum()}")
-print(f"Duplicate Records Removed  : {duplicates_before}")
-print("Profit Validation          : PASSED")
-print("Dataset Status             : Ready for SQL & Dashboard Analysis")
-print("\nExport Status : SUCCESS")
-print("CSV and Excel files generated successfully.")
+print(
+    f"Excel File : {EXCEL_OUTPUT}"
+)
 
 
 # ======================================================
-# GENERATE CLEANING REPORT
+# 22. GENERATE CLEANING REPORT
 # ======================================================
 
-with open(REPORT_OUTPUT, "w") as report:
+with open(
+    REPORT_OUTPUT,
+    "w",
+    encoding="utf-8"
+) as report:
 
-    report.write("MULTI-TOUCH MARKETING ATTRIBUTION & ROI DASHBOARD\n")
-    report.write("DATA CLEANING REPORT\n")
-    report.write("=" * 60 + "\n\n")
+    report.write(
+        "MULTI-TOUCH MARKETING "
+        "ATTRIBUTION & ROI DASHBOARD\n"
+    )
 
-    report.write(f"Total Records            : {len(df)}\n")
-    report.write(f"Total Columns            : {len(df.columns)}\n")
-    report.write(f"Duplicate Records Removed: {duplicates_before}\n")
-    report.write(f"Missing Values Remaining : {df.isnull().sum().sum()}\n")
-    report.write(f"Missing CPA Filled       : {missing_cpa}\n")
-    report.write(f"Unique Users             : {df['User ID'].nunique()}\n")
-    report.write(f"Unique Channels          : {df['Channel'].nunique()}\n")
-    report.write(f"Unique Campaigns         : {df['Campaign'].nunique()}\n")
-    report.write(f"Successful Conversions   : {df['Conversion'].sum()}\n")
+    report.write(
+        "DATA CLEANING REPORT\n"
+    )
 
-print("\nCleaning report generated successfully.")
-print(f"Report File : {REPORT_OUTPUT}")
+    report.write(
+        "=" * 60 + "\n\n"
+    )
+
+    report.write(
+        f"Script Version           : "
+        f"{SCRIPT_VERSION}\n"
+    )
+
+    report.write(
+        f"Initial Records          : "
+        f"{len(df) + duplicates_removed}\n"
+    )
+
+    report.write(
+        f"Final Records            : "
+        f"{len(df)}\n"
+    )
+
+    report.write(
+        f"Duplicate Records Removed: "
+        f"{duplicates_removed}\n"
+    )
+
+    report.write(
+        f"Missing CPA Filled       : "
+        f"{missing_cpa}\n"
+    )
+
+    report.write(
+        f"Remaining Missing Values : "
+        f"{total_remaining_missing}\n"
+    )
+
+    report.write(
+        f"Unique Users             : "
+        f"{unique_users}\n"
+    )
+
+    report.write(
+        f"Unique Channels          : "
+        f"{unique_channels}\n"
+    )
+
+    report.write(
+        f"Unique Campaigns         : "
+        f"{unique_campaigns}\n"
+    )
+
+    report.write(
+        f"Successful Conversions   : "
+        f"{successful_conversions}\n"
+    )
+
+    report.write(
+        f"Total Touchpoints        : "
+        f"{total_touchpoints}\n"
+    )
+
+    report.write(
+        f"Dataset Start Date       : "
+        f"{start_date}\n"
+    )
+
+    report.write(
+        f"Dataset End Date         : "
+        f"{end_date}\n"
+    )
+
+    report.write(
+        f"Total Days               : "
+        f"{total_days}\n"
+    )
+
+    report.write(
+        "\nProfit Validation        : "
+        f"{'PASSED' if profit_validation.all() else 'FAILED'}\n"
+    )
+
+    report.write(
+        "Conversion Validation    : "
+        f"{'PASSED' if valid_conversion else 'FAILED'}\n"
+    )
+
 
 # ======================================================
-# DATA QUALITY VALIDATION
+# 23. EXECUTION SUMMARY
 # ======================================================
-
-print("\n" + "=" * 60)
-print("DATA QUALITY VALIDATION")
-print("=" * 60)
-
-# Check for negative monetary values
-money_columns = [
-    "Campaign_Cost_USD",
-    "Budget_USD",
-    "Revenue_USD",
-    "Profit_USD",
-    "ROI_%",
-    "ROAS",
-    "CPA_USD"
-]
-
-for col in money_columns:
-    negative_count = (df[col] < 0).sum()
-    print(f"{col}: {negative_count} negative value(s)")
-
-# Validate Conversion values
-valid_conversion = df["Conversion"].isin([0, 1]).all()
-
-if valid_conversion:
-    print("\nConversion column validation: PASSED")
-else:
-    print("\nConversion column validation: FAILED")
-
-# Check for missing timestamps
-missing_timestamp = df["Timestamp"].isna().sum()
-print(f"Missing Timestamp values: {missing_timestamp}")
-
-print("\nCleaning process completed successfully.")
-print("The dataset is validated and ready for SQL analysis.")
 
 end_time = time.time()
 
-print(f"\nExecution Time: {end_time - start_time:.2f} seconds")
+execution_time = (
+    end_time - start_time
+)
+
+print("\n" + "=" * 60)
+print("DATA CLEANING COMPLETED SUCCESSFULLY")
+print("=" * 60)
+
+print(
+    f"\nCleaning Report : "
+    f"{REPORT_OUTPUT}"
+)
+
+print(
+    f"Execution Time  : "
+    f"{execution_time:.2f} seconds"
+)
+
+print(
+    "\nDataset is validated and ready "
+    "for SQL analysis and dashboard development."
+)
